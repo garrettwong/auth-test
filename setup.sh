@@ -65,7 +65,7 @@ function setup_github() {
     
     echo "Create these GITHUB ACTION Secrets at https://github.com/garrettwong/auth-test/settings/secrets/actions"
     echo "PROJECT_NUMBER: ${PROJECT_NUMBER}
-POOL_ID: my-pool
+POOL_ID: my-pool2
 PROVIDER_ID: my-provider
     SERVICE_ACCOUNT: workload-identity-sa@${PROJECT_ID}.iam.gserviceaccount.com"
     
@@ -76,7 +76,7 @@ function setup_gcp() {
     gcloud iam workload-identity-pools providers create-oidc "domain-ext" \
     --project="${PROJECT_ID}" \
     --location="global" \
-    --workload-identity-pool="my-pool" \
+    --workload-identity-pool="my-pool2" \
     --display-name="Provider for GCP Identities" \
     --attribute-mapping="google.subject=assertion.sub,attribute.actor=assertion.actor" \
     --issuer-uri="https://accounts.google.com"

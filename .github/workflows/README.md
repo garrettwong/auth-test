@@ -1,6 +1,6 @@
 # Configuring Github Actions WORKFLOWS
 
-Navigate to [Github Secrets](https://github.com/garrettwong/auth/settings/secrets/actions)
+Navigate to [Github Secrets](https://github.com/garrettwong/auth-test/settings/secrets/actions)
 
 Create SECRETS in Github REPO for:
 
