@@ -1,0 +1,46 @@
+name: GCLOUD
+on: [push]
+jobs:
+  _asdf:
+    runs-on: 'ubuntu-latest'
+
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    # actions/checkout MUST come before auth
+    - uses: 'actions/checkout@v2'
+
+    # Configure Workload Identity Federation via a credentials file.
+    - id: 'auth'
+      name: 'Authenticate to Google Cloud'
+      uses: 'google-github-actions/auth@v0'
+      with:
+        workload_identity_provider: 'projects/${{ secrets.PROJECT_NUMBER }}/locations/global/workloadIdentityPools/${{ secrets.POOL_ID }}/providers/${{ secrets.PROVIDER_ID }}'
+        service_account: '${{ secrets.SERVICE_ACCOUNT }}'
+
+    # Install gcloud, `setup-gcloud` automatically picks up authentication from `auth`.
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v0'
+
+    # Now you can run gcloud commands authenticated as the impersonated service account.
+    - id: 'gcloud'
+      name: 'gcloud'
+      run: |
+        NAME=$(gcloud secrets versions access "latest" --secret "my-secret")
+        echo ::set-output name=disk_name::$NAME
+
+    # Check and delete
+    - id: 'gclouddeletedisk'
+      name: 'gclouddeletedisk'
+      continue-on-error: true
+      run: |-
+        gcloud compute disks delete "${{ steps.gcloud.outputs.disk_name }}" --zone us-west1-a
+        
+    # Now you can run gcloud commands authenticated as the impersonated service account.
+    - id: 'gcloudcreatedisk'
+      name: 'gcloudcreatedisk'
+      run: |-
+        gcloud compute disks create "${{ steps.gcloud.outputs.disk_name }}" --zone us-west1-a
